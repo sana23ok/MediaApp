@@ -8,7 +8,6 @@ import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.result.contract.ActivityResultContracts
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mediaPlayer: MediaPlayer
@@ -24,8 +23,8 @@ class MainActivity : AppCompatActivity() {
         uri?.let {
             setupMediaPlayer(it)
             btnPlayAudio.isEnabled = true
-            btnStopAudio.isEnabled = true
             btnPauseAudio.isEnabled = true
+            btnStopAudio.isEnabled = true
         }
     }
 
@@ -49,7 +48,13 @@ class MainActivity : AppCompatActivity() {
         btnPlayVideo = findViewById(R.id.btnPlayVideo)
         videoView = findViewById(R.id.videoView)
 
-        // Налаштування MediaPlayer для аудіо
+        // Вимикаємо кнопки до вибору файлу
+        btnPlayAudio.isEnabled = false
+        btnPauseAudio.isEnabled = false
+        btnStopAudio.isEnabled = false
+        btnPlayVideo.isEnabled = false
+
+        // Налаштування MediaPlayer
         mediaPlayer = MediaPlayer()
 
         // Слухач для вибору аудіо
@@ -78,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         btnStopAudio.setOnClickListener {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
-                mediaPlayer.prepare()
+                mediaPlayer.reset() // Виправлення
             }
         }
 
@@ -88,26 +93,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Метод для налаштування MediaPlayer для аудіо
+    // Налаштування MediaPlayer
     private fun setupMediaPlayer(uri: Uri) {
+        mediaPlayer.reset() // Скидання перед новим файлом
         mediaPlayer.apply {
             setDataSource(this@MainActivity, uri)
             prepare()
         }
     }
 
-    // Метод для налаштування VideoView для відео
+    // Налаштування VideoView
     private fun setupVideoView(uri: Uri) {
-        videoView.apply {
-            setVideoURI(uri)
-            setOnPreparedListener {
-                btnPlayVideo.isEnabled = true
-            }
+        videoView.setVideoURI(uri)
+        videoView.setOnPreparedListener {
+            btnPlayVideo.isEnabled = true
         }
+        videoView.requestFocus()
     }
 
     override fun onStop() {
         super.onStop()
-        mediaPlayer.release()
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release() // Звільняємо ресурси правильно
     }
 }
