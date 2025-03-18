@@ -18,20 +18,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnPauseAudio: Button
     private lateinit var btnStopAudio: Button
     private lateinit var btnPlayVideo: Button
+    private lateinit var btnPauseVideo: Button
+    private lateinit var btnStopVideo: Button
+
+    private var lastAudioUri: Uri? = null
 
     private val pickAudioLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             setupMediaPlayer(it)
-            btnPlayAudio.isEnabled = true
-            btnPauseAudio.isEnabled = true
-            btnStopAudio.isEnabled = true
+            enableAudioControls(true)
         }
     }
 
     private val pickVideoLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             setupVideoView(it)
-            btnPlayVideo.isEnabled = true
+            enableVideoControls(true)
         }
     }
 
@@ -39,87 +41,79 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Ініціалізація елементів UI
         btnChooseAudio = findViewById(R.id.btnChooseAudio)
         btnChooseVideo = findViewById(R.id.btnChooseVideo)
         btnPlayAudio = findViewById(R.id.btnPlayAudio)
         btnPauseAudio = findViewById(R.id.btnPauseAudio)
         btnStopAudio = findViewById(R.id.btnStopAudio)
         btnPlayVideo = findViewById(R.id.btnPlayVideo)
+        btnPauseVideo = findViewById(R.id.btnPauseVideo)
+        btnStopVideo = findViewById(R.id.btnStopVideo)
         videoView = findViewById(R.id.videoView)
 
-        // Вимикаємо кнопки до вибору файлу
-        btnPlayAudio.isEnabled = false
-        btnPauseAudio.isEnabled = false
-        btnStopAudio.isEnabled = false
-        btnPlayVideo.isEnabled = false
+        enableAudioControls(false)
+        enableVideoControls(false)
 
-        // Налаштування MediaPlayer
         mediaPlayer = MediaPlayer()
 
-        // Слухач для вибору аудіо
-        btnChooseAudio.setOnClickListener {
-            pickAudioLauncher.launch("audio/*")
-        }
+        btnChooseAudio.setOnClickListener { pickAudioLauncher.launch("audio/*") }
+        btnChooseVideo.setOnClickListener { pickVideoLauncher.launch("video/*") }
 
-        // Слухач для вибору відео
-        btnChooseVideo.setOnClickListener {
-            pickVideoLauncher.launch("video/*")
-        }
-
-        // Слухач для відтворення аудіо
-        btnPlayAudio.setOnClickListener {
-            mediaPlayer.start()
-        }
-
-        // Слухач для паузи аудіо
-        btnPauseAudio.setOnClickListener {
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.pause()
-            }
-        }
-
-        // Слухач для зупинки аудіо
+        btnPlayAudio.setOnClickListener { mediaPlayer.start() }
+        btnPauseAudio.setOnClickListener { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
         btnStopAudio.setOnClickListener {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
-                mediaPlayer.reset() // Виправлення
+                mediaPlayer.reset()
+                lastAudioUri?.let { setupMediaPlayer(it) }
+                enableAudioControls(true)
             }
         }
 
-        // Слухач для відтворення відео
-        btnPlayVideo.setOnClickListener {
-            videoView.start()
+        btnPlayVideo.setOnClickListener { videoView.start() }
+        btnPauseVideo.setOnClickListener { if (videoView.isPlaying) videoView.pause() }
+        btnStopVideo.setOnClickListener {
+            videoView.stopPlayback()
+            videoView.resume()
+            enableVideoControls(false)
         }
     }
 
-    // Налаштування MediaPlayer
     private fun setupMediaPlayer(uri: Uri) {
-        mediaPlayer.reset() // Скидання перед новим файлом
+        lastAudioUri = uri
+        mediaPlayer.reset()
         mediaPlayer.apply {
             setDataSource(this@MainActivity, uri)
             prepare()
         }
     }
 
-    // Налаштування VideoView
     private fun setupVideoView(uri: Uri) {
         videoView.setVideoURI(uri)
-        videoView.setOnPreparedListener {
-            btnPlayVideo.isEnabled = true
-        }
+        videoView.setOnPreparedListener { enableVideoControls(true) }
         videoView.requestFocus()
+    }
+
+    private fun enableAudioControls(enabled: Boolean) {
+        btnPlayAudio.isEnabled = enabled
+        btnPauseAudio.isEnabled = enabled
+        btnStopAudio.isEnabled = enabled
+    }
+
+    private fun enableVideoControls(enabled: Boolean) {
+        btnPlayVideo.isEnabled = enabled
+        btnPauseVideo.isEnabled = enabled
+        btnStopVideo.isEnabled = enabled
     }
 
     override fun onStop() {
         super.onStop()
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
-        }
+        if (mediaPlayer.isPlaying) mediaPlayer.pause()
+        if (videoView.isPlaying) videoView.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release() // Звільняємо ресурси правильно
+        mediaPlayer.release()
     }
 }

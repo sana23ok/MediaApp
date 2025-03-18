@@ -57,6 +57,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.appcompat:appcompat:1.7.0")
+//    implementation("androidx.media3:media3-exoplayer:1.3.1")
+//    implementation("androidx.media3:media3-ui:1.3.1")
     //implementation(libs.androidx.appcompat)//Unresolved reference to version catalog
     //implementation(androidx.appcompat:appcompat:1.3.1)
 }
