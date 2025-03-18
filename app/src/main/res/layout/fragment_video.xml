@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- Кнопка для вибору відео файлу -->
+    <Button
+        android:id="@+id/btnChooseVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Video File" />
+
+    <!-- Відео-плеєр -->
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:visibility="visible" /> <!-- Make the VideoView visible -->
+
+    <!-- Кнопка для відтворення відео -->
+    <Button
+        android:id="@+id/btnPlayVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Video"
+        android:enabled="false"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Кнопка для паузи -->
+    <Button
+        android:id="@+id/btnPauseVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pause Video"
+        android:enabled="false"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Кнопка для зупинки -->
+    <Button
+        android:id="@+id/btnStopVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Video"
+        android:enabled="false"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Кнопка для переходу до аудіо -->
+    <Button
+        android:id="@+id/btnSwitchToAudio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch to Audio"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
