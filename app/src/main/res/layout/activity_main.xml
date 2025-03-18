@@ -43,12 +43,22 @@
         android:layout_height="wrap_content"
         android:text="Choose Audio"/>
 
+    <!-- Іконка для аудіо -->
+    <ImageView
+        android:id="@+id/audioIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_audio"
+        android:contentDescription="Audio Icon"
+        android:visibility="gone" />
+
     <!-- Відео управління -->
     <VideoView
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"

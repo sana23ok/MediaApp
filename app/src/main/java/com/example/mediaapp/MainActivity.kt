@@ -3,7 +3,9 @@ package com.example.mediaapp
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnPlayVideo: Button
     private lateinit var btnPauseVideo: Button
     private lateinit var btnStopVideo: Button
+    private lateinit var audioIcon: ImageView  // Changed from ImageButton to ImageView
 
     private var lastAudioUri: Uri? = null
 
@@ -27,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         uri?.let {
             setupMediaPlayer(it)
             enableAudioControls(true)
+            audioIcon.visibility = View.VISIBLE // Показуємо іконку для аудіо
+            videoView.visibility = View.GONE // Ховаємо відео
         }
     }
 
@@ -34,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         uri?.let {
             setupVideoView(it)
             enableVideoControls(true)
+            videoView.visibility = View.VISIBLE // Показуємо відео
+            audioIcon.visibility = View.GONE // Ховаємо іконку для аудіо
         }
     }
 
@@ -50,6 +57,7 @@ class MainActivity : AppCompatActivity() {
         btnPauseVideo = findViewById(R.id.btnPauseVideo)
         btnStopVideo = findViewById(R.id.btnStopVideo)
         videoView = findViewById(R.id.videoView)
+        audioIcon = findViewById(R.id.audioIcon)
 
         enableAudioControls(false)
         enableVideoControls(false)
