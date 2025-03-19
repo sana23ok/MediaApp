@@ -19,7 +19,7 @@ class VideoFragment : Fragment() {
     private lateinit var btnStopVideo: Button
     private lateinit var btnSwitchToAudio: Button  // Кнопка для перемикання на аудіо формат
 
-    // Declare the pickVideoLauncher at the fragment level (before onViewCreated)
+    // Контракт для вибору відео
     private val pickVideoLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             setupVideoView(it)
@@ -37,53 +37,54 @@ class VideoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Ініціалізація елементів інтерфейсу
         videoView = view.findViewById(R.id.videoView)
         btnChooseVideo = view.findViewById(R.id.btnChooseVideo)
         btnPlayVideo = view.findViewById(R.id.btnPlayVideo)
         btnPauseVideo = view.findViewById(R.id.btnPauseVideo)
         btnStopVideo = view.findViewById(R.id.btnStopVideo)
-        btnSwitchToAudio = view.findViewById(R.id.btnSwitchToAudio)  // Ініціалізація кнопки
+        btnSwitchToAudio = view.findViewById(R.id.btnSwitchToAudio)
 
-        enableVideoControls(false)
+        enableVideoControls(false)  // Спочатку вимикаємо кнопки
 
+        // Запуск вибору відео
         btnChooseVideo.setOnClickListener {
-            // Launch the video picker
             pickVideoLauncher.launch("video/*")
         }
 
+        // Кнопка для відтворення відео
         btnPlayVideo.setOnClickListener {
-            if (!videoView.isPlaying) {
-                videoView.start()
-            }
+            if (!videoView.isPlaying) videoView.start()
         }
 
+        // Кнопка для паузи відео
         btnPauseVideo.setOnClickListener {
-            if (videoView.isPlaying) {
-                videoView.pause()
-            }
+            if (videoView.isPlaying) videoView.pause()
         }
 
+        // Кнопка для зупинки відео
         btnStopVideo.setOnClickListener {
             if (videoView.isPlaying) {
                 videoView.stopPlayback()
-                videoView.resume()
+                videoView.resume()  // Дозволяє відтворити відео знову
             }
-            // Allow to play video again after stopping
             enableVideoControls(true)
         }
 
-        // Перехід до аудіо фрагменту
+        // Перехід до фрагменту з аудіо
         btnSwitchToAudio.setOnClickListener {
             (activity as MainActivity).showAudioFragment()
         }
     }
 
+    // Налаштування VideoView для відтворення відео
     private fun setupVideoView(uri: Uri) {
         videoView.setVideoURI(uri)
         videoView.setOnPreparedListener { enableVideoControls(true) }
         videoView.requestFocus()
     }
 
+    // Увімкнення/вимкнення кнопок керування відео
     private fun enableVideoControls(enabled: Boolean) {
         btnPlayVideo.isEnabled = enabled
         btnPauseVideo.isEnabled = enabled
